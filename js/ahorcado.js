@@ -1,5 +1,12 @@
-var palabra = 'Tamarindo';
-var hombre;
+var palabra = ['Peyorativo','Misantropia','hipofisis','hipotalamo','Ventriculo','esclerosis','necrosis','isquemia','filantropia','Epilepsia'];
+var hombre, l, espacio;
+
+function escogePalabra()
+{
+	var pAleatoria = Math.floor(Math.random()*(palabra.length));
+	seleccion = palabra[pAleatoria];
+	return seleccion;
+}
 
 // Clase Ahorcado
 var Ahorcado = function(con)
@@ -147,24 +154,92 @@ Ahorcado.prototype.trazar = function()
 	if(this.intentos >= this.maximo)
 	{
 		this.vivo = false;
-		//alert('¡Estás muerto!');
+		alert('¡Estás muerto!');
 	}
 	this.dibujar();
 }
 
 function iniciar()
 {
+	l = document.getElementById('letra');
+	var b = document.getElementById('boton');
 	var canvas = document.getElementById('ahorcado');
+	var palabraE = escogePalabra();
 	canvas.width = 500;
 	canvas.height = 400;
 	var contexto = canvas.getContext('2d');
 	hombre = new Ahorcado(contexto);
-	hombre.trazar(); // Cabeza
-	hombre.trazar(); // Torso
-	// hombre.trazar(); // Brazos
-	// hombre.trazar(); // Piernas
-	// hombre.trazar(); // Perdiste
+
+	// Convierte a mayúscula un texto
+	palabra = palabraE.toUpperCase();
+
+	// Declaro un array con n espacios de acuerdo al largo de la palabra
+	espacio = new Array(palabraE.length);
+
+	// Agregamos una función que se dispare al dar click al botón
+	b.addEventListener('click', agregarLetra);
+
+	mostrarPista(espacio);
 }
+function agregarLetra()
+{
+	var letra = l.value;
+	letra = letra.toUpperCase();
+	l.value = '';
+	l.focus();
+	mostrarPalabra(palabra, hombre, letra);
+}
+function mostrarPalabra(palabra, ahorcado, letra)
+{
+	var pista = document.getElementById('pista');
+	var encontrado = false;
+	var p;
+	letra = letra.toUpperCase();
+	for(p in palabra)
+	{
+		if(letra == palabra[p])
+		{
+			espacio[p] = letra;
+			encontrado = true;
+		}
+	}
+	mostrarPista(espacio);
+
+	// Si no lo encontré
+	if(!encontrado)
+	{
+		ahorcado.trazar();
+	}
+
+	if(!ahorcado.vivo)
+	{
+		pista.innerText = palabra +' era la palabra :(';
+	}
+}
+function mostrarPista(espacio)
+{
+	var pista = document.getElementById('pista');
+	var texto = '';
+	var i;
+	var largo = espacio.length;
+
+	for(i = 0; i < largo; i++)
+	{
+		if(espacio[i] != undefined)
+		{
+			texto += espacio[i] + ' ';
+		}
+		else
+		{
+			texto += '_ ';
+		}
+		pista.innerText = texto;
+	}
+}
+
+
+
+
 
 
 
